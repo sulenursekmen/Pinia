@@ -7,6 +7,7 @@
  </header>
  <main>
   <div class="container">
+    <new-diary></new-diary>
     <div class="data-area">
       <p  v-if="filter==='all'">Toplam {{ diaryStore.totalCount }} kayıt var</p>
       <p v-if="filter==='favs'">Toplam {{ diaryStore.favCount }} kayıt var</p>
@@ -32,9 +33,12 @@
 import {useDiaryStore} from './stores/DiaryStore'
 import DiaryDetails from './components/diary-details.vue'
 import { ref } from 'vue';
+import NewDiary from './components/new-diary.vue';
   export default {
     components:{
-      'diary-details':DiaryDetails
+      'diary-details':DiaryDetails,
+      'new-diary':NewDiary
+
     },
     //composition api
     setup(){
