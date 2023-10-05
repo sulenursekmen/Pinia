@@ -13,8 +13,8 @@
   <div class="container">
     <new-diary></new-diary>
     <div class="data-area">
-      <p  v-if="filter==='all'">Toplam {{ diaryStore.totalCount }} kayıt var</p>
-      <p v-if="filter==='favs'">Toplam {{ diaryStore.favCount }} kayıt var</p>
+      <p  v-if="filter==='all'">Toplam {{ totalCount }} kayıt var</p>
+      <p v-if="filter==='favs'">Toplam {{ favCount }} kayıt var</p>
       <div>
         <button @click="$event=>filter='all'">Tüm Günlüklerim</button>
         <button @click="$event=>filter='favs'">Sadece beğendiklerim</button>
@@ -28,6 +28,9 @@
     <div class="diary-list" v-for="gunluk in diaryStore.favs" v-if="filter==='favs'">
      <diary-details :gunluk="gunluk"></diary-details>
     </div>
+    
+    <p><button @click="diaryStore.$reset">Reset</button></p>
+
 
   </div>
  </main>
@@ -38,6 +41,7 @@ import {useDiaryStore} from './stores/DiaryStore'
 import DiaryDetails from './components/diary-details.vue'
 import { ref } from 'vue';
 import NewDiary from './components/new-diary.vue';
+import {storeToRefs} from 'pinia';
   export default {
     components:{
       'diary-details':DiaryDetails,
@@ -47,9 +51,12 @@ import NewDiary from './components/new-diary.vue';
     //composition api
     setup(){
       const diaryStore=useDiaryStore();
+      //storeToRefs sadece getirilebilir degerler icin kullanılır action icin kullanılamaz
+      const {diary,loading,favs,totalCount,favCount} = storeToRefs(diaryStore);
+
       const filter= ref('all')
       diaryStore.getDiary()
-      return {diaryStore,filter}
+      return {diaryStore,filter,diary,loading,favs,totalCount,favCount}
     }
   }
 </script>
