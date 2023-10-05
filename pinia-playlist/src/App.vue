@@ -1,3 +1,7 @@
+<!-- terminalde json-server kurulumu -->
+<!-- npm install -g json-server -->
+<!-- json-server -w ./pinia-playlist/data/db.json -->
+
 <template>
  <header>
   <div class="container">
@@ -44,6 +48,7 @@ import NewDiary from './components/new-diary.vue';
     setup(){
       const diaryStore=useDiaryStore();
       const filter= ref('all')
+      diaryStore.getDiary()
       return {diaryStore,filter}
     }
   }

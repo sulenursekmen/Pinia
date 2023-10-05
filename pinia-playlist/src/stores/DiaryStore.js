@@ -2,10 +2,8 @@ import { defineStore } from 'pinia';
 
 export const useDiaryStore = defineStore("diaryStore", {
     state: () => ({
-        diary: [
-            { id: 1, diary: "bugün hava bulutlu", date: "05.10.2023", isFav: false },
-            { id: 2, diary: "bugün hava güzel", date: "04.10.2023", isFav: true }
-        ],
+        diary: [],
+        loading:false,
     }),
     getters: {
         favs() {
@@ -21,17 +19,52 @@ export const useDiaryStore = defineStore("diaryStore", {
         }
     },
     actions: {
-        newDiary(entry) {
-            this.diary.push(entry);
+
+        async getDiary(){
+            this.loading=true
+            const res=await fetch("http://localhost:3000/diary")
+            const data=await res.json()
+            this.diary=data
+            this.loading=false
         },
-        toggleFav(id){
+
+        async newDiary(entry) {
+            try {
+                this.diary.push(entry);
+                const res = await fetch("http://localhost:3000/diary", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(entry)
+                });
+        
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Gelen cevabı da işleyebilirsiniz, eğer gerekliyse.
+                // const data = await res.json();
+        
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        
+        async toggleFav(id){
             const diary=this.diary.find(diary=>diary.id===id)
             diary.isFav=!diary.isFav
+
+            const res = await fetch("http://localhost:3000/diary/"+id, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({isFav:diary.isFav})
+            });
         },
-        deleteDiary(id){
+        async deleteDiary(id){
             this.diary=this.diary.filter(diary=>{
                 return diary.id!==id
             })
+            const res = await fetch("http://localhost:3000/diary/"+id, {
+                method: 'DELETE',
+            });
         }
     }
 });
